@@ -23,4 +23,4 @@
 ## 6. 驗證與部署
 
 - [x] 6.1 於乾淨瀏覽器實測匯出：帶截圖的公告型輸出為 2160×2700 且圖中可見截圖卡片；不帶截圖者與現狀一致（驗證 Announcement template content）。驗收：實際匯出比對兩種情況。
-- [ ] 6.2 `npm run build` 確認 `web/public/presets/`、`web/public/shots/` 進 `dist`，push 觸發 GitHub Pages 部署。驗收：公開網址可選預設底圖、選常用資訊主題加入並成功出圖。
+- [x] 6.2 `npm run build` 確認 `web/public/presets/`、`web/public/shots/` 進 `dist`，push 觸發 GitHub Pages 部署。驗收：公開網址可選預設底圖、選常用資訊主題加入並成功出圖。
