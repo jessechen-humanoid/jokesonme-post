@@ -1,0 +1,9 @@
+{
+  "template": "banner",
+  "output": "output/banner-demo.png",
+  "background": "assets/底圖/demo背景.png",
+  "overlay": 1,
+  "tag": "付費會員限定",
+  "subtitle": "8 月號 EP5 & EP6",
+  "logo": "assets/logo/現代問題維修中心標準字/現代問題維修中心_主視覺_橫_白有陰影.png"
+}

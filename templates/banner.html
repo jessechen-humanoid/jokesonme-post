@@ -1,0 +1,78 @@
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 3200px; height: 1200px;   /* 橫幅 Banner */
+    font-family: "Noto Sans CJK TC", "Noto Sans TC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .canvas {
+    position: relative;
+    width: 3200px; height: 1200px;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  .bg {
+    position: absolute; inset: 0;
+    background-image: var(--bg);
+    background-size: cover;
+    background-position: center;
+  }
+  /* 底部壓暗，讓主標與文字浮出來 */
+  .bg::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 30%,
+      rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.72) 100%);
+    opacity: var(--overlay, 1);
+  }
+
+  /* 底部置中堆疊：月號那行 → 主標 logo */
+  .stack {
+    position: absolute;
+    left: 0; right: 0; bottom: 70px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 14px;
+  }
+
+  .meta {
+    display: flex; align-items: center; gap: 26px;
+  }
+  .tag {
+    background: #F5C518;
+    color: #1a1a1a;
+    font-weight: 900;
+    font-size: 44px;
+    letter-spacing: 2px;
+    padding: 12px 26px;
+    border-radius: 8px;
+    transform: rotate(-2.5deg);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .tag:empty { display: none; }
+  .subtitle {
+    font-weight: 900;
+    font-size: 56px;
+    letter-spacing: 2px;
+    text-shadow: 0 3px 14px rgba(0,0,0,0.55);
+  }
+  .subtitle:empty { display: none; }
+
+  .logo { width: 1820px; height: auto; }
+</style>
+
+<div class="canvas">
+  <div class="bg" style="--bg: {{BG}}; --overlay: {{OVERLAY}};"></div>
+  <div class="stack">
+    <div class="meta">
+      <span class="tag">{{TAG}}</span>
+      <span class="subtitle">{{SUBTITLE}}</span>
+    </div>
+    {{LOGO}}
+  </div>
+</div>

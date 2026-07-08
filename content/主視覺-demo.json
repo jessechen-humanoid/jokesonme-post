@@ -1,0 +1,8 @@
+{
+  "template": "主視覺標題",
+  "output": "output/主視覺-demo.png",
+  "background": "assets/底圖/demo背景.png",
+  "overlay": 1,
+  "title": "現代問題維修中心\n8 月號熱賣中",
+  "badge": "本期報修人\n竹節蟲 & 傑哥"
+}

@@ -1,0 +1,7 @@
+.spectra/
+openspec/.vector-search.db*
+.DS_Store
+node_modules/
+web/node_modules/
+web/dist/
+.render-tmp.html

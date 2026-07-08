@@ -1,0 +1,8 @@
+/* Noto Sans TC 變體字型（一檔含 100–900），自 repo 內嵌，不依賴使用者本機字體 */
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url("../fonts/NotoSansTC.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}

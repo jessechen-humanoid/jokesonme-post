@@ -1,0 +1,70 @@
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1080px; height: 1350px;   /* IG 直式 4:5 */
+    font-family: "Noto Sans CJK TC", "Noto Sans TC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .canvas {
+    position: relative;
+    width: 1080px; height: 1350px;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  .bg {
+    position: absolute; inset: 0;
+    background-image: var(--bg);
+    background-size: cover;
+    background-position: center;
+  }
+  /* 只在頂端輕壓一層，讓白色標題浮出來，不擋住照片 */
+  .bg::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.12) 26%, rgba(0,0,0,0) 42%);
+    opacity: var(--overlay, 1);
+  }
+
+  .title {
+    position: absolute;
+    top: 70px; left: 60px; right: 60px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 96px;
+    line-height: 1.12;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 22px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.5);
+  }
+
+  /* 橘色圓 badge：右下角，有寫 badge 才會出現 */
+  .badge {
+    position: absolute;
+    right: 60px; bottom: 66px;
+    width: 366px; height: 366px;
+    border-radius: 50%;
+    background: #F26B1F;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  }
+  .badge span {
+    display: block;
+    text-align: center;
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1.42;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    padding: 0 18px;
+  }
+</style>
+
+<div class="canvas">
+  <div class="bg" style="--bg: {{BG}}; --overlay: {{OVERLAY}};"></div>
+  <div class="title">{{TITLE}}</div>
+  {{BADGE}}
+</div>
