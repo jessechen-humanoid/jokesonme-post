@@ -8,7 +8,7 @@ import { renderAndZip } from "./zip.js";
 
 const state = {
   type: "banner",
-  banner: { brand: "mprc", subtitle: "", tag: "", image: null },
+  banner: { brand: "mprc", subtitle: "", tag: "", season: "", date: "", venue: "", image: null },
   igTemplate: "gonggao",
   ig: {
     gonggao: { title: "", intro: "", listText: "", image: null },
@@ -133,11 +133,18 @@ function renderBannerControls(panel) {
     o.value = k; o.textContent = v.label; if (k === b.brand) o.selected = true;
     sel.appendChild(o);
   });
-  sel.addEventListener("change", () => { b.brand = sel.value; renderPreview(); });
+  sel.addEventListener("change", () => { b.brand = sel.value; renderControls(); renderPreview(); });
   panel.appendChild(field("品牌", sel));
 
-  panel.appendChild(field("副標（例：8 月號 EP5 & EP6）", textInput(b.subtitle, (v) => (b.subtitle = v))));
-  panel.appendChild(field("黃色標籤（選配，留空不顯示）", textInput(b.tag, (v) => (b.tag = v))));
+  if (b.brand === "kwxh") {
+    // 看我笑話：季月號 + 日期時間 + 場地（版面自動用左上 logo 版型）
+    panel.appendChild(field("季／月號（例：第 2 季 6 月號）", textInput(b.season, (v) => (b.season = v))));
+    panel.appendChild(field("日期時間（例：2026.6.20 週六晚上 7:30 開演）", textInput(b.date, (v) => (b.date = v))));
+    panel.appendChild(field("場地（例：卡米地+ 大廳｜臺北市中山區復興北路480號）", textInput(b.venue, (v) => (b.venue = v))));
+  } else {
+    panel.appendChild(field("副標（例：8 月號 EP5 & EP6）", textInput(b.subtitle, (v) => (b.subtitle = v))));
+    panel.appendChild(field("黃色標籤（選配，留空不顯示）", textInput(b.tag, (v) => (b.tag = v))));
+  }
 
   const dz = document.createElement("div");
   mountDropzone(dz, (url) => { b.image = url; renderControls(); renderPreview(); }, !!b.image);
@@ -146,7 +153,7 @@ function renderBannerControls(panel) {
   const dl = document.createElement("button");
   dl.className = "btn primary";
   dl.textContent = "下載 PNG";
-  dl.addEventListener("click", () => exportSingle("banner", b, slugify(b.subtitle) + "-banner"));
+  dl.addEventListener("click", () => exportSingle("banner", b, slugify(b.brand === "kwxh" ? b.season : b.subtitle) + "-banner"));
   const actions = document.createElement("div");
   actions.className = "actions";
   actions.appendChild(dl);

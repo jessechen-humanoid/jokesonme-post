@@ -62,16 +62,35 @@ export function buildCanvas(kind, data) {
   }
 
   if (kind === "banner") {
-    const stack = document.createElement("div");
-    stack.className = "stack";
-    const brand = BRAND_LOGOS[data.brand] || BRAND_LOGOS.mprc;
-    stack.innerHTML =
-      `<div class="meta">` +
-      `<span class="tag">${fmt(data.tag)}</span>` +
-      `<span class="subtitle">${fmt(data.subtitle)}</span>` +
-      `</div>` +
-      `<img class="logo" style="${brand.style}" src="${brand.logo}" crossorigin="anonymous">`;
-    canvas.appendChild(stack);
+    const brandKey = BRAND_LOGOS[data.brand] ? data.brand : "mprc";
+    const brand = BRAND_LOGOS[brandKey];
+    canvas.classList.add("brand-" + brandKey);
+
+    if (brandKey === "kwxh") {
+      // 看我笑話：logo 左上、季月號在下、右下角日期＋場地（復刻 Season 2）
+      canvas.insertAdjacentHTML(
+        "beforeend",
+        `<img class="kwxh-logo" src="${brand.logo}" crossorigin="anonymous">` +
+          `<div class="kwxh-bottom">` +
+          `<div class="season">${fmt(data.season)}</div>` +
+          `<div class="divider"></div>` +
+          `<div class="info">` +
+          `<div class="date">${fmt(data.date)}</div>` +
+          `<div class="venue">${fmt(data.venue)}</div>` +
+          `</div></div>`
+      );
+    } else {
+      // 現代問題維修中心：logo 置中偏下 + 黃標 + 月號
+      const stack = document.createElement("div");
+      stack.className = "stack";
+      stack.innerHTML =
+        `<div class="meta">` +
+        `<span class="tag">${fmt(data.tag)}</span>` +
+        `<span class="subtitle">${fmt(data.subtitle)}</span>` +
+        `</div>` +
+        `<img class="logo" style="${brand.style}" src="${brand.logo}" crossorigin="anonymous">`;
+      canvas.appendChild(stack);
+    }
   }
 
   return canvas;

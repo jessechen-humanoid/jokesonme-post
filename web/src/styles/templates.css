@@ -105,3 +105,37 @@
 }
 .tpl-banner .subtitle:empty { display: none; }
 .tpl-banner .logo { display: block; } /* 尺寸由各品牌 inline style 決定（比例差異大） */
+
+/* 看我笑話 Banner：左上 logo + 季月號 + 右下日期／場地（復刻 Season 2） */
+.tpl-banner.brand-kwxh .bg::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.15) 34%, rgba(0,0,0,0) 55%),
+    linear-gradient(0deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.1) 26%, rgba(0,0,0,0) 42%);
+  opacity: var(--overlay, 1);
+}
+.tpl-banner .kwxh-logo {
+  position: absolute; top: 96px; left: 96px; height: 560px; width: auto; display: block;
+  filter: drop-shadow(0 4px 18px rgba(0,0,0,0.45));
+}
+.tpl-banner .kwxh-bottom {
+  position: absolute; left: 96px; right: 96px; bottom: 96px;
+  display: flex; align-items: center; gap: 40px;
+}
+.tpl-banner .kwxh-bottom .season {
+  font-weight: 900; font-size: 84px; letter-spacing: 2px; white-space: nowrap;
+  text-shadow: 0 3px 16px rgba(0,0,0,0.55);
+}
+.tpl-banner .kwxh-bottom .season:empty { display: none; }
+.tpl-banner .kwxh-bottom .divider {
+  flex: 1; height: 4px; background: #fff; border-radius: 2px; opacity: 0.9;
+}
+.tpl-banner .kwxh-bottom .info {
+  text-align: left; white-space: nowrap;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+.tpl-banner .kwxh-bottom .info .date { font-weight: 900; font-size: 46px; letter-spacing: 1px; }
+.tpl-banner .kwxh-bottom .info .venue { font-weight: 900; font-size: 38px; letter-spacing: 1px; margin-top: 8px; }
+.tpl-banner .kwxh-bottom .info .date:empty,
+.tpl-banner .kwxh-bottom .info .venue:empty { display: none; }
