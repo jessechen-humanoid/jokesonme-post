@@ -9,7 +9,7 @@ import { renderAndZip } from "./zip.js";
 
 const state = {
   type: "banner",
-  banner: { brand: "mprc", subtitle: "", tag: "", season: "", date: "", venue: "", image: null },
+  banner: { brand: "mprc", subtitle: "", tag: "會員限定", season: "", date: "", venue: "", image: null },
   // IG：每張貼文都是可編輯的物件；表單直接綁「當前作用中」那張
   igPosts: [], // [{id, template, title, intro, listText, badge, image, shot}]
   activeId: null,
