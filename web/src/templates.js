@@ -44,14 +44,17 @@ export function buildCanvas(kind, data) {
   if (kind === "gonggao") {
     const content = document.createElement("div");
     content.className = "content";
-    content.innerHTML =
-      `<div class="title">${fmt(data.title)}</div>` +
-      `<div class="intro">${fmt(data.intro)}</div>`;
+    let html = `<div class="title">${fmt(data.title)}</div>`;
+    if (String(data.intro ?? "").trim() !== "") html += `<div class="intro">${fmt(data.intro)}</div>`;
     const items = (data.list || []).filter((x) => String(x).trim() !== "");
     if (items.length) {
-      content.innerHTML +=
-        `<ol class="list">${items.map((li) => `<li>${fmt(li)}</li>`).join("")}</ol>`;
+      html += `<ol class="list">${items.map((li) => `<li>${fmt(li)}</li>`).join("")}</ol>`;
     }
+    // 選配 App 截圖卡片（常用資訊用）：放在文字下方
+    if (data.shot) {
+      html += `<div class="shot"><img src="${data.shot}" crossorigin="anonymous"></div>`;
+    }
+    content.innerHTML = html;
     canvas.appendChild(content);
   }
 

@@ -102,3 +102,11 @@ button.btn:disabled { opacity: .45; cursor: not-allowed; }
   border: none; border-radius: 5px; font-size: 11px; cursor: pointer; padding: 1px 6px;
 }
 .empty { font-size: 13px; color: var(--muted); }
+
+/* 預設底圖縮圖列 */
+.presetrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.presetthumb {
+  width: 64px; height: 80px; object-fit: cover; border-radius: 8px;
+  border: 1px solid var(--line); cursor: pointer; transition: .12s;
+}
+.presetthumb:hover { border-color: var(--accent); transform: translateY(-1px); }
