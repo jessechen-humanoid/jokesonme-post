@@ -4,8 +4,8 @@
     {
       "name": "asset-generator",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "web", "--", "--port", "5173", "--strictPort"],
-      "port": 5173
+      "runtimeArgs": ["run", "dev", "--prefix", "web", "--", "--port", "5175", "--strictPort"],
+      "port": 5175
     }
   ]
 }
