@@ -1,16 +1,8 @@
-// 瀏覽器內把版型 DOM rasterize 成 PNG：離屏用真實尺寸渲染、內嵌字體、等字體與圖片就緒、2x 輸出。
-import * as htmlToImage from "html-to-image";
+// 瀏覽器內把版型 DOM rasterize 成 PNG。
+// 用 html2canvas：直接在 canvas 重繪、沿用頁面已載入的字體，不走 SVG、不內嵌字體
+// （html-to-image 的 SVG→img 步驟在真實 Chrome 會卡死，且需內嵌 ~7MB 字體）。
+import html2canvas from "html2canvas";
 import { buildCanvas, SIZES } from "./templates.js";
-
-let fontCssCache = null;
-
-async function ensureFontEmbedCSS(node) {
-  await document.fonts.ready; // Wait for fonts before capture
-  if (!fontCssCache) {
-    fontCssCache = await htmlToImage.getFontEmbedCSS(node);
-  }
-  return fontCssCache;
-}
 
 function loadImage(src) {
   return new Promise((resolve) => {
@@ -40,15 +32,17 @@ export async function renderToBlob(kind, data) {
   holder.appendChild(canvas);
   document.body.appendChild(holder);
   try {
-    const fontEmbedCSS = await ensureFontEmbedCSS(canvas);
+    await document.fonts.ready; // 字體就緒才截圖
     await waitImages(canvas, data);
-    return await htmlToImage.toBlob(canvas, {
-      pixelRatio: 2,
+    const rendered = await html2canvas(canvas, {
       width: size.w,
       height: size.h,
-      cacheBust: true,
-      fontEmbedCSS,
+      scale: 2, // 2x retina 輸出
+      backgroundColor: null,
+      useCORS: true,
+      logging: false,
     });
+    return await new Promise((res) => rendered.toBlob(res, "image/png"));
   } finally {
     holder.remove();
   }

@@ -21,8 +21,15 @@ function fmt(s) {
 function makeBg(data) {
   const bg = document.createElement("div");
   bg.className = "bg";
-  if (data.image) bg.style.setProperty("--bg", `url("${data.image}")`);
   bg.style.setProperty("--overlay", data.overlay ?? 1);
+  // 用 <img> 當底圖（避開 CSS url() 對超大 data URL 的長度限制，大圖才不會變空白）
+  if (data.image) {
+    const im = document.createElement("img");
+    im.className = "bgimg";
+    im.crossOrigin = "anonymous";
+    im.src = data.image;
+    bg.appendChild(im);
+  }
   return bg;
 }
 

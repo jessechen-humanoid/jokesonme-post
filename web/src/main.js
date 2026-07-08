@@ -114,20 +114,34 @@ function readFileAsDataURL(file) {
   });
 }
 
-// 確認瀏覽器真的能把這張圖解碼（HEIC 等格式會失敗）
-function imageDecodes(src) {
+// 載入成 <img>；瀏覽器無法解碼（如 HEIC）時回傳 null
+function loadImageEl(src) {
   return new Promise((resolve) => {
     const im = new Image();
-    im.onload = () => resolve(im.naturalWidth > 0);
-    im.onerror = () => resolve(false);
+    im.onload = () => resolve(im.naturalWidth > 0 ? im : null);
+    im.onerror = () => resolve(null);
     im.src = src;
   });
 }
 
+// 縮到長邊上限並重新編碼成 JPEG：避免超大 data URL、加速渲染，畫質對社群輸出足夠
+const MAX_EDGE = 3600;
+function downscale(img) {
+  const scale = Math.min(1, MAX_EDGE / Math.max(img.naturalWidth, img.naturalHeight));
+  const w = Math.round(img.naturalWidth * scale);
+  const h = Math.round(img.naturalHeight * scale);
+  const cv = document.createElement("canvas");
+  cv.width = w;
+  cv.height = h;
+  cv.getContext("2d").drawImage(img, 0, 0, w, h);
+  return cv.toDataURL("image/jpeg", 0.92);
+}
+
 async function acceptFile(file, onImage) {
   if (!file) return;
-  const url = await readFileAsDataURL(file);
-  if (!(await imageDecodes(url))) {
+  const raw = await readFileAsDataURL(file);
+  const img = await loadImageEl(raw);
+  if (!img) {
     alert(
       "這張圖片瀏覽器無法顯示，常見於 iPhone／Mac 的 HEIC 格式。\n\n" +
       "請改用 JPG 或 PNG：\n" +
@@ -136,7 +150,7 @@ async function acceptFile(file, onImage) {
     );
     return;
   }
-  onImage(url);
+  onImage(downscale(img));
 }
 
 function mountDropzone(elm, onImage, hasImage) {

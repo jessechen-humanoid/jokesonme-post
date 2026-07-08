@@ -12,10 +12,15 @@
 .canvas .bg {
   position: absolute;
   inset: 0;
-  background-image: var(--bg, none);
-  background-size: cover;
-  background-position: center;
   background-color: #444; /* 未放底圖時的佔位底色 */
+}
+.canvas .bg .bgimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* ---------- 公告型（1080×1350） ---------- */
