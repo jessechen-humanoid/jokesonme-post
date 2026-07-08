@@ -63,10 +63,25 @@ button.btn.primary { background: var(--accent); color: #fff; }
 button.btn.ghost { background: #ececf0; color: var(--ink); }
 button.btn:disabled { opacity: .45; cursor: not-allowed; }
 
-/* 預覽區：canvas 用真實尺寸，靠 transform 縮放顯示 */
+/* 預覽區：canvas 用真實尺寸，靠 transform 縮放；整張塞進可視範圍並置中 */
 .preview-wrap { position: sticky; top: 20px; }
-.stage { width: 100%; overflow: hidden; border-radius: 12px; background: #ddd; }
-.stage .canvas { transform-origin: top left; }
+.stage { width: 100%; display: flex; justify-content: center; }
+.stage-inner { position: relative; overflow: hidden; border-radius: 12px; background: #ddd; }
+.stage-inner .canvas { position: absolute; top: 0; left: 0; transform-origin: top left; }
+
+/* 預覽導覽列（多張 IG 時的上一張／下一張） */
+#previewNav {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 12px; min-height: 22px;
+}
+#previewNav button {
+  width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--line);
+  background: #fff; cursor: pointer; font-size: 16px; font-weight: 800; line-height: 1;
+}
+#previewNav button:disabled { opacity: .35; cursor: default; }
+#previewNav .navlabel { font-size: 13px; font-weight: 700; min-width: 96px; text-align: center; }
+#previewNav .navlabel .edit { color: var(--accent); }
+.postcard.active { outline: 3px solid var(--accent); }
 
 /* IG 多圖清單 */
 .posts { margin-top: 18px; }

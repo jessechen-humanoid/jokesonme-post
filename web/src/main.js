@@ -15,6 +15,7 @@ const state = {
     zhuvisual: { title: "", badge: "", image: null },
   },
   posts: [],
+  previewIndex: null, // null = 預覽編輯中；數字 = 預覽第 N 張已存貼文
 };
 
 let seq = 0;
@@ -28,6 +29,11 @@ function igToData(f, tpl) {
   return { title: f.title, badge: f.badge, image: f.image };
 }
 function currentPreview() {
+  // IG 且正在看某張已存貼文
+  if (state.type === "ig" && state.previewIndex != null && state.posts[state.previewIndex]) {
+    const p = state.posts[state.previewIndex];
+    return { kind: p.kind, data: p.data };
+  }
   if (state.type === "banner") return { kind: "banner", data: state.banner };
   return { kind: state.igTemplate, data: igToData(state.ig[state.igTemplate], state.igTemplate) };
 }
@@ -35,20 +41,67 @@ function slugify(s) {
   return (String(s || "").trim().replace(/\s+/g, "-").replace(/[\/\\:*?"<>|]/g, "").slice(0, 20)) || "ig";
 }
 
-// ---- 縮放把真實尺寸 canvas 塞進容器 ----
-function fitCanvas(canvasEl, kind, containerEl, containerWidth) {
+// ---- 縮放：整張塞進「可用寬度 ∩ 可視高度」，取較小者，確保不用捲動 ----
+function fitCanvas(innerEl, canvasEl, kind) {
   const size = SIZES[kind];
-  const scale = containerWidth / size.w;
+  const availW = stage.clientWidth || 700;
+  const maxH = Math.max(320, window.innerHeight - 260);
+  const scale = Math.min(availW / size.w, maxH / size.h);
+  innerEl.style.width = size.w * scale + "px";
+  innerEl.style.height = size.h * scale + "px";
   canvasEl.style.transform = `scale(${scale})`;
-  containerEl.style.height = size.h * scale + "px";
 }
 
 function renderPreview() {
+  renderPreviewNav();
   const { kind, data } = currentPreview();
   stage.innerHTML = "";
+  const inner = document.createElement("div");
+  inner.className = "stage-inner";
   const canvas = buildCanvas(kind, data);
-  stage.appendChild(canvas);
-  fitCanvas(canvas, kind, stage, stage.clientWidth);
+  inner.appendChild(canvas);
+  stage.appendChild(inner);
+  fitCanvas(inner, canvas, kind);
+}
+
+// 多張 IG 時的預覽導覽（編輯中 ↔ 逐張切換）
+function renderPreviewNav() {
+  let nav = document.getElementById("previewNav");
+  if (!nav) {
+    nav = document.createElement("div");
+    nav.id = "previewNav";
+    stage.parentElement.insertBefore(nav, stage);
+  }
+  nav.innerHTML = "";
+  if (state.type !== "ig" || state.posts.length === 0) return;
+
+  const total = state.posts.length;
+  const atEdit = state.previewIndex == null;
+  const prev = document.createElement("button");
+  prev.textContent = "‹";
+  prev.title = "上一張";
+  const next = document.createElement("button");
+  next.textContent = "›";
+  next.title = "下一張";
+  const label = document.createElement("div");
+  label.className = "navlabel";
+  label.innerHTML = atEdit
+    ? `<span class="edit">編輯中</span>`
+    : `第 ${state.previewIndex + 1} / ${total} 張`;
+
+  // 序列：編輯中 → 1 → 2 … → N（循環）
+  prev.disabled = atEdit; // 編輯中已是最左
+  next.disabled = !atEdit && state.previewIndex >= total - 1;
+  prev.addEventListener("click", () => {
+    if (atEdit) return;
+    state.previewIndex = state.previewIndex === 0 ? null : state.previewIndex - 1;
+    renderControls(); renderPreview();
+  });
+  next.addEventListener("click", () => {
+    state.previewIndex = atEdit ? 0 : Math.min(total - 1, state.previewIndex + 1);
+    renderControls(); renderPreview();
+  });
+  nav.append(prev, label, next);
 }
 
 // ---- 讀圖成 dataURL（不上傳，僅瀏覽器記憶體） ----
@@ -114,14 +167,14 @@ function textInput(value, onInput, placeholder) {
   const i = document.createElement("input");
   i.value = value || "";
   if (placeholder) i.placeholder = placeholder;
-  i.addEventListener("input", () => { onInput(i.value); renderPreview(); });
+  i.addEventListener("input", () => { onInput(i.value); state.previewIndex = null; renderPreview(); });
   return i;
 }
 function textArea(value, onInput, placeholder) {
   const t = document.createElement("textarea");
   t.value = value || "";
   if (placeholder) t.placeholder = placeholder;
-  t.addEventListener("input", () => { onInput(t.value); renderPreview(); });
+  t.addEventListener("input", () => { onInput(t.value); state.previewIndex = null; renderPreview(); });
   return t;
 }
 
@@ -167,7 +220,7 @@ function renderIgControls(panel) {
     o.value = k; o.textContent = label; if (k === state.igTemplate) o.selected = true;
     sel.appendChild(o);
   });
-  sel.addEventListener("change", () => { state.igTemplate = sel.value; renderControls(); renderPreview(); });
+  sel.addEventListener("change", () => { state.igTemplate = sel.value; state.previewIndex = null; renderControls(); renderPreview(); });
   panel.appendChild(field("版型", sel));
 
   const f = state.ig[state.igTemplate];
@@ -240,8 +293,13 @@ function renderPostsSection(panel) {
 
 function postCard(p, idx) {
   const card = document.createElement("div");
-  card.className = "postcard";
+  card.className = "postcard" + (state.previewIndex === idx ? " active" : "");
   card.dataset.id = p.id;
+  card.title = "點縮圖在右邊預覽這張";
+  card.addEventListener("click", () => {
+    state.previewIndex = idx;
+    renderControls(); renderPreview();
+  });
   const thumb = document.createElement("div");
   thumb.className = "thumb";
   const c = buildCanvas(p.kind, p.data);
@@ -258,7 +316,9 @@ function postCard(p, idx) {
   del.addEventListener("click", (e) => {
     e.stopPropagation();
     state.posts = state.posts.filter((x) => x.id !== p.id);
+    if (state.previewIndex != null && state.previewIndex >= state.posts.length) state.previewIndex = null;
     renderControls();
+    renderPreview();
   });
   card.appendChild(del);
   return card;
@@ -274,6 +334,7 @@ function addCurrentPost() {
     slug: slugify(data.title),
   });
   renderControls();
+  renderPreview(); // 更新導覽列（讓 ‹ › 出現）
 }
 
 // ---- 匯出 ----
@@ -291,6 +352,7 @@ async function exportZip() {
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
     state.type = tab.dataset.type;
+    state.previewIndex = null;
     syncTabs();
     renderControls();
     renderPreview();
