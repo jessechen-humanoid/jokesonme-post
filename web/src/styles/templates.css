@@ -104,4 +104,4 @@
   text-shadow: 0 3px 14px rgba(0,0,0,0.55);
 }
 .tpl-banner .subtitle:empty { display: none; }
-.tpl-banner .logo { width: 1820px; height: auto; display: block; }
+.tpl-banner .logo { display: block; } /* 尺寸由各品牌 inline style 決定（比例差異大） */

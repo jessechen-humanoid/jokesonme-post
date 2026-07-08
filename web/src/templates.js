@@ -6,8 +6,9 @@ export const SIZES = {
 };
 
 export const BRAND_LOGOS = {
-  kwxh: { label: "看我笑話", logo: `${import.meta.env.BASE_URL}logo-kwxh.png` },
-  mprc: { label: "現代問題維修中心", logo: `${import.meta.env.BASE_URL}logo-mprc.png` },
+  // 兩品牌 logo 比例差很多：現代問題維修中心是橫長字標（抓寬），看我笑話接近方形（抓高）
+  kwxh: { label: "看我笑話", logo: `${import.meta.env.BASE_URL}logo-kwxh.png`, style: "height:620px;width:auto;" },
+  mprc: { label: "現代問題維修中心", logo: `${import.meta.env.BASE_URL}logo-mprc.png`, style: "width:1820px;height:auto;" },
 };
 
 // \n → <br>，**粗體** → <b>粗體</b>（先跳脫 HTML 特殊字元）
@@ -69,7 +70,7 @@ export function buildCanvas(kind, data) {
       `<span class="tag">${fmt(data.tag)}</span>` +
       `<span class="subtitle">${fmt(data.subtitle)}</span>` +
       `</div>` +
-      `<img class="logo" src="${brand.logo}" crossorigin="anonymous">`;
+      `<img class="logo" style="${brand.style}" src="${brand.logo}" crossorigin="anonymous">`;
     canvas.appendChild(stack);
   }
 
