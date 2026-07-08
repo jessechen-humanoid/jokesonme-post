@@ -114,6 +114,31 @@ function readFileAsDataURL(file) {
   });
 }
 
+// 確認瀏覽器真的能把這張圖解碼（HEIC 等格式會失敗）
+function imageDecodes(src) {
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.onload = () => resolve(im.naturalWidth > 0);
+    im.onerror = () => resolve(false);
+    im.src = src;
+  });
+}
+
+async function acceptFile(file, onImage) {
+  if (!file) return;
+  const url = await readFileAsDataURL(file);
+  if (!(await imageDecodes(url))) {
+    alert(
+      "這張圖片瀏覽器無法顯示，常見於 iPhone／Mac 的 HEIC 格式。\n\n" +
+      "請改用 JPG 或 PNG：\n" +
+      "・iPhone：設定 → 相機 → 格式 → 選「相容性最佳」再拍，或先截圖\n" +
+      "・Mac：用「預覽程式」打開後 檔案 → 輸出成 JPEG"
+    );
+    return;
+  }
+  onImage(url);
+}
+
 function mountDropzone(elm, onImage, hasImage) {
   elm.className = "dropzone" + (hasImage ? " has-img" : "");
   elm.textContent = hasImage ? "✓ 已載入底圖（點此更換）" : "把底圖拖進來，或點此選擇";
@@ -123,18 +148,15 @@ function mountDropzone(elm, onImage, hasImage) {
   input.style.display = "none";
   elm.appendChild(input);
   elm.addEventListener("click", () => input.click());
-  input.addEventListener("change", async (e) => {
-    const file = e.target.files[0];
-    if (file) onImage(await readFileAsDataURL(file));
-  });
+  input.addEventListener("change", (e) => acceptFile(e.target.files[0], onImage));
   ["dragover", "dragenter"].forEach((ev) =>
     elm.addEventListener(ev, (e) => { e.preventDefault(); elm.classList.add("drag"); }));
   ["dragleave", "drop"].forEach((ev) =>
     elm.addEventListener(ev, () => elm.classList.remove("drag")));
-  elm.addEventListener("drop", async (e) => {
+  elm.addEventListener("drop", (e) => {
     e.preventDefault();
-    const file = [...e.dataTransfer.files].find((f) => f.type.startsWith("image/"));
-    if (file) onImage(await readFileAsDataURL(file));
+    // 不靠 f.type 過濾（HEIC 從 Finder 拖進來時 type 常是空字串），直接取第一個檔
+    acceptFile(e.dataTransfer.files[0], onImage);
   });
 }
 
