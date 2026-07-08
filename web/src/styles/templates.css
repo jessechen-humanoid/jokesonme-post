@@ -47,6 +47,7 @@
   text-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 .tpl-gonggao .intro b { font-weight: 900; }
+.tpl-gonggao .outro { margin-top: 34px; margin-bottom: 0; }
 .tpl-gonggao ol.list {
   list-style: none; counter-reset: item;
   display: flex; flex-direction: column; gap: 28px;

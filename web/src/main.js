@@ -23,7 +23,7 @@ const stage = document.getElementById("stage");
 function newPost(fields = {}) {
   return {
     id: "p" + ++seq, template: "gonggao",
-    title: "", intro: "", listText: "", badge: "", image: null, shot: "",
+    title: "", intro: "", listText: "", outro: "", listStart: 1, badge: "", image: null, shot: "",
     ...fields,
   };
 }
@@ -41,7 +41,7 @@ function ensureActive() {
 }
 function postToRender(p) {
   if (p.template === "gonggao")
-    return { kind: "gonggao", data: { title: p.title, intro: p.intro, list: (p.listText || "").split("\n"), image: p.image, shot: p.shot } };
+    return { kind: "gonggao", data: { title: p.title, intro: p.intro, list: (p.listText || "").split("\n"), outro: p.outro, listStart: p.listStart, image: p.image, shot: p.shot } };
   return { kind: "zhuvisual", data: { title: p.title, badge: p.badge, image: p.image } };
 }
 
@@ -283,6 +283,7 @@ function renderIgControls(panel) {
     panel.appendChild(field("標題", textArea(p.title, (v) => (p.title = v), "可換行"), "換行用 Enter"));
     panel.appendChild(field("內文（細節）", textArea(p.intro, (v) => (p.intro = v)), "**兩個星號** 之間會變粗體"));
     panel.appendChild(field("條列（每行一項，選配）", textArea(p.listText, (v) => (p.listText = v))));
+    panel.appendChild(field("結尾段落（選配，放條列下方）", textArea(p.outro, (v) => (p.outro = v))));
   } else {
     panel.appendChild(field("標題", textArea(p.title, (v) => (p.title = v), "可換行")));
     panel.appendChild(field("橘色圓 badge（選配，留空不顯示）", textArea(p.badge, (v) => (p.badge = v), "例：本期報修人\\n竹節蟲 & 傑哥")));
@@ -392,7 +393,8 @@ function addCommonInfo(topicId) {
     const np = newPost({
       template: "gonggao",
       title: s.title || "", intro: s.intro || "",
-      listText: (s.list || []).join("\n"), image: base, shot: s.shot || "",
+      listText: (s.list || []).join("\n"), outro: s.outro || "", listStart: s.listStart || 1,
+      image: base, shot: s.shot || "",
     });
     state.igPosts.push(np);
     if (!firstId) firstId = np.id;

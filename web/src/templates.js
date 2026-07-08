@@ -48,8 +48,12 @@ export function buildCanvas(kind, data) {
     if (String(data.intro ?? "").trim() !== "") html += `<div class="intro">${fmt(data.intro)}</div>`;
     const items = (data.list || []).filter((x) => String(x).trim() !== "");
     if (items.length) {
-      html += `<ol class="list">${items.map((li) => `<li>${fmt(li)}</li>`).join("")}</ol>`;
+      // listStart 可讓編號接續上一張（例如第二張從 4 開始）
+      const startAttr = data.listStart > 1 ? ` style="counter-reset:item ${data.listStart - 1}"` : "";
+      html += `<ol class="list"${startAttr}>${items.map((li) => `<li>${fmt(li)}</li>`).join("")}</ol>`;
     }
+    // 結尾段落（放在條列下方）
+    if (String(data.outro ?? "").trim() !== "") html += `<div class="intro outro">${fmt(data.outro)}</div>`;
     // 選配 App 截圖卡片（常用資訊用）：放在文字下方
     if (data.shot) {
       html += `<div class="shot"><img src="${data.shot}" crossorigin="anonymous"></div>`;
