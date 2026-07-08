@@ -150,7 +150,7 @@
   text-align: left; white-space: nowrap;
   text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
-.tpl-banner .kwxh-bottom .info .date { font-weight: 900; font-size: 46px; letter-spacing: 1px; }
-.tpl-banner .kwxh-bottom .info .venue { font-weight: 900; font-size: 38px; letter-spacing: 1px; margin-top: 8px; }
+.tpl-banner .kwxh-bottom .info .date { font-weight: 900; font-size: 62px; letter-spacing: 1px; }
+.tpl-banner .kwxh-bottom .info .venue { font-weight: 900; font-size: 50px; letter-spacing: 1px; margin-top: 10px; }
 .tpl-banner .kwxh-bottom .info .date:empty,
 .tpl-banner .kwxh-bottom .info .venue:empty { display: none; }
