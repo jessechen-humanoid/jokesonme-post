@@ -40,5 +40,5 @@
 
 ## 7. 部署與退役
 
-- [ ] 7.1 設定 GitHub Actions 自動 build 並部署到 GitHub Pages（公開）—— 對應「純前端靜態架構、部署 GitHub Pages」。驗收：公開網址可由他人瀏覽器開啟並完整操作出圖。（workflow 已備妥 `.github/workflows/deploy.yml`；尚待 Jesse 建立 public repo、push、於 Settings→Pages 選 GitHub Actions 後方能驗證公開網址。）
+- [x] 7.1 設定 GitHub Actions 自動 build 並部署到 GitHub Pages（公開）—— 對應「純前端靜態架構、部署 GitHub Pages」。驗收：公開網址可由他人瀏覽器開啟並完整操作出圖。（已完成：public repo `jessechen-humanoid/jokesonme-post`、Pages source=GitHub Actions、build+deploy 成功，公開網址 https://jessechen-humanoid.github.io/jokesonme-post/ 實測載入、字體內嵌、預覽正常。）
 - [x] 7.2 執行「退役本機 puppeteer 產出路徑」：移除 `render.mjs` 與 `puppeteer-core` 依賴，README 改指向網頁工具。驗收：`package.json` 不再含 `puppeteer-core`、`render.mjs` 已移除、README 更新完成（內容審查）。
