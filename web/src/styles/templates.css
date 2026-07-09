@@ -63,13 +63,15 @@
 }
 .tpl-gonggao ol.list > li b { font-weight: 900; }
 
-/* 選配 App 截圖卡片（常用資訊）：填滿文字下方剩餘空間、貼齊底部、放大 */
+/* 選配 App 截圖卡片（常用資訊）：緊貼文字下方、滿版寬，過高則往下出血裁切 */
 .tpl-gonggao .shot {
-  flex: 1 1 auto; min-height: 0; margin-top: 40px;
-  display: flex; align-items: flex-end; justify-content: center;
+  flex: 1 1 auto; min-height: 0;
+  margin-top: 40px; margin-bottom: -82px; /* 抵消 content 底部 padding，讓截圖出血至畫布底 */
+  display: flex; align-items: flex-start; justify-content: center;
+  overflow: hidden;
 }
 .tpl-gonggao .shot img {
-  max-width: 100%; max-height: 100%; width: auto; height: auto; display: block;
+  width: 100%; height: auto; display: block;
   border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
 
