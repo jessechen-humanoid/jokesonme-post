@@ -65,6 +65,8 @@ function fitCanvas(innerEl, canvasEl, kind) {
   innerEl.style.height = size.h * scale + "px";
   canvasEl.style.transform = `scale(${scale})`;
 }
+// 目前預覽節點，供 resize 時直接重算縮放（不重建 DOM、不重新解碼底圖）
+let curInner = null, curCanvas = null, curKind = null;
 function renderPreview() {
   renderPreviewNav();
   const { kind, data } = currentPreview();
@@ -74,6 +76,7 @@ function renderPreview() {
   const canvas = buildCanvas(kind, data);
   inner.appendChild(canvas);
   stage.appendChild(inner);
+  curInner = inner; curCanvas = canvas; curKind = kind;
   fitCanvas(inner, canvas, kind);
 }
 
@@ -119,14 +122,15 @@ function loadImageEl(src) {
   });
 }
 const MAX_EDGE = 3600;
-function downscale(img) {
+// 縮圖：含透明度的來源（PNG）輸出 PNG 以保留透明區，其餘用 JPEG 壓縮
+function downscale(img, isPng) {
   const scale = Math.min(1, MAX_EDGE / Math.max(img.naturalWidth, img.naturalHeight));
   const w = Math.round(img.naturalWidth * scale);
   const h = Math.round(img.naturalHeight * scale);
   const cv = document.createElement("canvas");
   cv.width = w; cv.height = h;
   cv.getContext("2d").drawImage(img, 0, 0, w, h);
-  return cv.toDataURL("image/jpeg", 0.92);
+  return isPng ? cv.toDataURL("image/png") : cv.toDataURL("image/jpeg", 0.92);
 }
 async function acceptFile(file, onImage) {
   if (!file) return;
@@ -141,7 +145,13 @@ async function acceptFile(file, onImage) {
     );
     return;
   }
-  onImage(downscale(img));
+  // 未超過最大邊長：直接用原圖，不經 canvas 重編碼（無世代損失、透明度天然保留）
+  if (Math.max(img.naturalWidth, img.naturalHeight) <= MAX_EDGE) {
+    onImage(raw);
+    return;
+  }
+  const isPng = /^data:image\/png/i.test(raw);
+  onImage(downscale(img, isPng));
 }
 function mountDropzone(elm, onImage, hasImage) {
   elm.className = "dropzone" + (hasImage ? " has-img" : "");
@@ -377,7 +387,7 @@ function postCard(p, idx) {
 
 // 判斷「沒有實質內容」的貼文（忽略底圖——底圖會另外當 base 沿用）
 function isEmptyPost(p) {
-  return !p.title && !p.intro && !p.listText && !p.badge && !p.shot;
+  return !p.title && !p.intro && !p.listText && !p.outro && !p.badge && !p.shot;
 }
 
 // 帶入常用資訊主題：每張投影片 → 一則可編輯貼文，底圖沿用當下選定
@@ -432,7 +442,14 @@ function syncTabs() {
     t.classList.toggle("active", t.dataset.type === state.type));
 }
 
-window.addEventListener("resize", renderPreview);
+let resizeRaf = 0;
+window.addEventListener("resize", () => {
+  if (resizeRaf) return;
+  resizeRaf = requestAnimationFrame(() => {
+    resizeRaf = 0;
+    if (curInner && curCanvas && curKind) fitCanvas(curInner, curCanvas, curKind);
+  });
+});
 
 // ---- 初始化 ----
 syncTabs();
