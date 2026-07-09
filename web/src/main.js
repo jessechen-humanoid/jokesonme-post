@@ -24,6 +24,7 @@ function newPost(fields = {}) {
   return {
     id: "p" + ++seq, template: "gonggao",
     title: "", intro: "", listText: "", outro: "", listStart: 1, badge: "", image: null, shot: "",
+    textSize: "normal", // 內文字級：normal（31px）| large（40px，同 reference）
     ...fields,
   };
 }
@@ -41,7 +42,7 @@ function ensureActive() {
 }
 function postToRender(p) {
   if (p.template === "gonggao")
-    return { kind: "gonggao", data: { title: p.title, intro: p.intro, list: (p.listText || "").split("\n"), outro: p.outro, listStart: p.listStart, image: p.image, shot: p.shot } };
+    return { kind: "gonggao", data: { title: p.title, intro: p.intro, list: (p.listText || "").split("\n"), outro: p.outro, listStart: p.listStart, image: p.image, shot: p.shot, textSize: p.textSize } };
   return { kind: "zhuvisual", data: { title: p.title, badge: p.badge, image: p.image } };
 }
 
@@ -291,6 +292,14 @@ function renderIgControls(panel) {
 
   if (p.template === "gonggao") {
     panel.appendChild(field("標題", textArea(p.title, (v) => (p.title = v), "可換行"), "換行用 Enter"));
+    const sizeSel = document.createElement("select");
+    [["normal", "標準"], ["large", "大（同過往貼文）"]].forEach(([k, label]) => {
+      const o = document.createElement("option");
+      o.value = k; o.textContent = label; if (k === (p.textSize || "normal")) o.selected = true;
+      sizeSel.appendChild(o);
+    });
+    sizeSel.addEventListener("change", () => { p.textSize = sizeSel.value; renderPreview(); });
+    panel.appendChild(field("內文字級（含條列與結尾段落）", sizeSel));
     panel.appendChild(field("內文（細節）", textArea(p.intro, (v) => (p.intro = v)), "**兩個星號** 之間會變粗體"));
     panel.appendChild(field("條列（每行一項，選配）", textArea(p.listText, (v) => (p.listText = v))));
     panel.appendChild(field("結尾段落（選配，放條列下方）", textArea(p.outro, (v) => (p.outro = v))));
@@ -405,6 +414,7 @@ function addCommonInfo(topicId) {
       title: s.title || "", intro: s.intro || "",
       listText: (s.list || []).join("\n"), outro: s.outro || "", listStart: s.listStart || 1,
       image: base, shot: s.shot || "",
+      textSize: "large", // 過往常用資訊貼文（reference）即為大字級
     });
     state.igPosts.push(np);
     if (!firstId) firstId = np.id;

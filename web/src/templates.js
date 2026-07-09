@@ -42,6 +42,7 @@ export function buildCanvas(kind, data) {
   canvas.appendChild(makeBg(data));
 
   if (kind === "gonggao") {
+    if (data.textSize === "large") canvas.classList.add("size-large");
     const content = document.createElement("div");
     content.className = "content";
     let html = `<div class="title">${fmt(data.title)}</div>`;

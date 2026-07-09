@@ -63,6 +63,11 @@
 }
 .tpl-gonggao ol.list > li b { font-weight: 900; }
 
+/* 內文字級「大」：同過往 reference 貼文（內文/條列/結尾 31px → 40px） */
+.tpl-gonggao.size-large .intro { font-size: 40px; line-height: 1.6; }
+.tpl-gonggao.size-large ol.list > li { font-size: 40px; line-height: 1.55; padding-left: 62px; }
+.tpl-gonggao.size-large ol.list > li::before { font-size: 40px; }
+
 /* 選配 App 截圖卡片（常用資訊）：緊貼文字下方、滿版寬，過高則往下出血裁切 */
 .tpl-gonggao .shot {
   flex: 1 1 auto; min-height: 0;
